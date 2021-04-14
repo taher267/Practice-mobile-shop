@@ -35,7 +35,4 @@ class DBController {
   
 }
 
-
-//dataabase Object
 $db = new DBController;
-

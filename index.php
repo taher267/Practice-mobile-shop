@@ -1,4 +1,5 @@
 <?php
+ob_start();
 //header file
 include_once 'header.php';
 
@@ -13,7 +14,7 @@ include_once "Template/_top_sale.php";
 // Special Price  
 include_once "Template/_special_price.php";
 // !Special Price  
-
+// ob_start();
 // Banner Ads   
 include_once "Template/_banner_adds.php";
 // !Banner Ads   
