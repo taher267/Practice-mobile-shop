@@ -26,12 +26,18 @@ class Cart
 	 		}
 	 	}
 	 }
-	 // public function CartData($cartArray)
-	 // {
-	 // 	if ($result = $this->insertIntoCart($cartArray)) {
-	 // 		//Reload Page
-	 // 		header("Location:" . $_SERVER["PHP_SELF"]);
-	 // 	}
-	 // }
+	 //Get data useing user id
+	 public function GetCartData($user_id = null, $table ='cart') {
+	 	if ($user_id != null) {
+	 		$sql = sprintf("SELECT * FROM %s WHERE user_id=%d",$table, $user_id);
+	 		$result = $this->db->con->query($sql);
+	        $resultArray =[];
+	        while ($item = $result->fetch_array(MYSQLI_ASSOC)) {
+	        	$resultArray[] =$item;
+	        }
+	        return $resultArray;
+	 	}
+        
+    }
 
 }

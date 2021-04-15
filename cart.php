@@ -1,6 +1,6 @@
 <?php require_once("header.php");
-  $cartPros = $Product->GetData('cart');
-  $item_id =  array_map(function($item){return $item['item_id']; }, $cartPros);
+ $cartPros = $Cart->GetCartData(5);
+ $item_id =  array_map(function($item){return $item['item_id']; }, $cartPros);
   // print_r($item_id);
 ?>
 <!-- Shopping cart section  -->
@@ -49,7 +49,7 @@
           </div>
           <div class="col-sm-2 text-right">
             <div class="font-size-20 text-danger font-baloo">
-              $<span class="product_price"><?php echo $item['item_image']??0;?></span>
+              $<span class="product_price"><?php echo $item['item_price']??0;?></span>
             </div>
           </div>
         </div>
