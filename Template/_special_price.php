@@ -1,11 +1,18 @@
-<?php $productShuffle = $Product->GetData();
+<?php 
+//cookie check
+if (isset($_COOKIE['Auth'])) {
+  $currentId= array_map(function($user){return $user['user_id'];}, $curCookie);
+}
+
+   //fetch Product
+$productShuffle = $Product->GetData();
 shuffle($productShuffle);
 $brand = array_map(function($pro){ return $pro['item_brand'];}, $productShuffle);
 $unique = array_unique($brand);
 sort($unique);
 //add To cart
 if ($_SERVER['REQUEST_METHOD']=="POST") {
-  if (isset($_POST['_special_price'])) {
+  if (isset($_POST['_special_price_submit'])) {
     $cartArray = array(
       'user_id' => $_POST['user_id'],
       'item_id' => $_POST['item_id'],
@@ -13,6 +20,15 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
     $Cart->insertIntoCart($cartArray);
   }
 }
+
+//cart empty or not
+
+// $inCart = $Cart->GetCartId($Product->GetData('cart'));
+// if (!empty($inCart)) {
+//   $InTheCart = $inCart ;
+// }else{
+//   $InTheCart =[];
+// }
 ?>
 <section id="special-price">
   <div class="container">
@@ -28,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
       <button class="btn" data-filter=".Redmi">Redmi</button> -->
     </div>
     <div class="grid">
-      <?php array_map(function($item){?>
+      <?php array_map(function($item) use($currentId, $InTheCart){?>
       
       <div class="grid-item border <?php echo $item['item_brand'];?>">
         <div class="item py-2" style="width: 200px;">
@@ -48,8 +64,19 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
               </div>
               <form method="post">
                 <input type="hidden" name="item_id" value="<?php echo $item['item_id'] ?>">
-                <input type="hidden" name="user_id" value="<?php echo 1; ?>">
-                <button  type="submit" name="_special_price" class="btn btn-warning font-size-12">Add to Cart</button>
+                <input type="hidden" name="user_id" value="<?php echo isset($_COOKIE['Auth'])?$currentId[0]:0 ; ?>">
+                 <?php 
+                    if (in_array($item['item_id'], $InTheCart)) {
+                      if ($currentId>0) {
+                      echo '<button disabled class="btn btn-success font-size-12">In the Cart</button>';
+                    }else{
+                      echo '<button  type="submit" name="_special_price_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
+                    }
+                      
+                    }else{
+                      echo '<button  type="submit" name="_special_price_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
+                    }
+                  ?>
               </form>
             </div>
           </div>

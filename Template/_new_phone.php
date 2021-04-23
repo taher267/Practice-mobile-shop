@@ -3,13 +3,30 @@ $productShuffle = $Product->GetData();
 shuffle($productShuffle);
 //add to cart
 if ($_SERVER['REQUEST_METHOD']=="POST") {
-  if (isset($_POST['_new_phone'])) {
+  if (isset($_POST['_new_phone_submit'])) {
     $cartArray = array(
       'user_id' => $_POST['user_id'],
       'item_id' => $_POST['item_id'],
     );
     $Cart->insertIntoCart($cartArray);
   }
+}
+
+//cookie check
+if (isset($_COOKIE['Auth'])):
+$Auth =  $_COOKIE['Auth'];
+$curCookie = $Login->checkCookie($Auth);
+$currentId= array_map(function($user){return $user['user_id'];}, $curCookie);
+//print_r($currentId);
+else: $currentId= null;
+endif;
+//cart empty or not
+
+$inCart = $Cart->GetCartId($Product->GetData('cart'),1);
+if (!empty($inCart)) {
+  $InTheCart = $inCart ;
+}else{
+  $InTheCart =[];
 }
 ?>
 <section id="new-phones">
@@ -18,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
     <hr>
     <!-- owl carousel -->
     <div class="owl-carousel owl-theme">
-      <?php array_map(function($item){ ?>
+      <?php array_map(function($item) use($currentId, $InTheCart){ ?>
       <div class="item py-2 bg-light">
         <div class="product font-rale">
           <a href="<?php printf("%s?item_id=%s",'product.php',$item['item_id']); ?>"><img src="<?php echo $item['item_image']??$url .'assets/products/1.png';?>" alt="product1" class="img-fluid"></a>
@@ -36,8 +53,17 @@ if ($_SERVER['REQUEST_METHOD']=="POST") {
             </div>
             <form method="post">
               <input type="hidden" name="item_id" value="<?php echo $item['item_id'] ?>">
-              <input type="hidden" name="user_id" value="<?php echo 1; ?>">
-              <button  type="submit" name="_new_phone" class="btn btn-warning font-size-12">Add to Cart</button>
+              <input type="hidden" name="user_id" value="<?php echo isset($_COOKIE['Auth'])?$currentId[0]:0 ; ?>">
+               <?php 
+                  if (in_array($item['item_id'], $InTheCart)) {
+                    if ($currentId>0) {
+                      echo '<button disabled class="btn btn-success font-size-12">In the Cart</button>';
+                    }else{
+                    echo '<button  type="submit" name="_top_sale_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
+              }
+                  }else{
+                    echo '<button  type="submit" name="_top_sale_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
+              }?>
             </form>
           </div>
         </div>

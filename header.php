@@ -1,4 +1,6 @@
 <?php $url = "http://localhost/shopee2/"; ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,8 +21,15 @@
     <!-- Custom CSS file -->
     <link rel="stylesheet" href="<?php echo $url;?>style.css">
     <?php require 'functions.php';
-    //echo "<h1>Bismillah</h1>";
+    session_start();
     ?>
+     <?php if (isset($_COOKIE['Auth'])): 
+    $Auth = $_COOKIE['Auth'];
+    $loginAuth = $Login->checkCookie($Auth);
+    $currentId= array_map(function($user){return $user['user_id'];}, $loginAuth);
+    // print_r($currentId[0]) ; exit();
+
+   endif; ?>
 </head>
 
 <body>
@@ -33,8 +42,18 @@
                     <?php if (!isset($_COOKIE['Auth'])): ?>
                       <a href="login.php" class="px-3 border-right border-left text-dark">Login</a>
                       <a href="signup.php" class="px-3 border-right border-left text-dark">Signup</a>
-                    <?php else:?>
-                      <a href="login.php" class="px-3 border-right border-left text-dark">Log Out</a>
+                    <?php else:
+
+                      if (isset($_POST['logout_submit'])) {
+                        $Login->Logout();
+                      }
+                      ?>
+                      <a class="px-3 border-right border-left text-dark">
+                        <form method="POST" class="d-inline-block" accept-charset="utf-8">
+                          <button class="btn btn-light " name="logout_submit" type="submit">Log Out</button>
+                        </form>
+                      </a>
+                      <a href="profile.php" class="px-3 border-right border-left text-dark">Profile</a>
                     <?php endif; ?>
                     <a href="#" class="px-3 border-right text-dark">Whishlist (0)</a>
                 </div>
@@ -68,11 +87,15 @@
                       </li>
                   </ul>
                   <form action="#" class="font-size-14 font-rale">
+                    <?php 
+                     if (isset($_COOKIE['Auth'])) {
+                         $cartNum = count($Cart->GetCartData($currentId[0],'cart'));
+                       
+                        }
+                     ?>
                       <a href="cart.php" class="py-2 rounded-pill color-primary-bg">
                         <span class="font-size-16 px-2 text-white"><i class="fas fa-shopping-cart"></i></span>
-                        <span class="px-3 py-2 rounded-pill text-dark bg-light"><?php echo count($Cart->GetCartData(1,'cart')); ?>
-                          
-                          <?php ?>
+                        <span class="px-3 py-2 rounded-pill text-dark bg-light"><?php echo isset($_COOKIE['Auth'])?$cartNum:0;?>
                         </span>
                       </a>
                   </form>

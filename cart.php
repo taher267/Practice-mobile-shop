@@ -1,7 +1,21 @@
-<?php require_once("header.php");
- $cartPros = $Cart->GetCartData(5);
- $item_id =  array_map(function($item){return $item['item_id']; }, $cartPros);
-  // print_r($item_id);
+<?php
+ob_start();
+if (isset($_COOKIE['Auth'])):
+require_once("header.php");
+if (isset($_COOKIE['Auth'])) {
+$Auth =  $_COOKIE['Auth'];
+$curCookie = $Login->checkCookie($Auth);
+$currentId= array_map(function($user){return $user['user_id'];}, $curCookie);
+}else{ $currentId=null; }// end cookie
+if ($_SERVER['REQUEST_METHOD']=='POST') {
+if (isset($_POST['delete_submit'])) {
+$Cart->deleteCartItem($_POST['user_id'], $_POST['item_id']);
+}
+}//end delete cart item
+$cartPros = $Cart->GetCartData($currentId[0]);
+// print_r($cartPros);exit();
+$item_id = array_map(function($item){return $item['item_id']; }, $cartPros);
+// print_r($item_id);
 ?>
 <!-- Shopping cart section  -->
 <section id="cart" class="py-3">
@@ -11,11 +25,10 @@
     <div class="row">
       <div class="col-sm-9">
         <!-- cart item -->
-        <?php foreach ($cartPros as $item) {
-          $cart = $Product->GetProduct($item['item_id']);
-          array_map(function($item){?>
-          
-              
+        <?php
+        foreach ($cartPros as $item):
+        $cart = $Product->GetProduct($item['item_id']);
+        $subTotal[] = array_map(function($item) use($currentId){?>
         <div class="row border-top py-3 mt-3">
           <div class="col-sm-2">
             <img src="<?php echo $item['item_image']??"./assets/products/1.png"; ?>" style="height: 120px;" alt="cart1" class="img-fluid">
@@ -38,41 +51,54 @@
             product qty
             <div class="qty d-flex pt-2">
               <div class="d-flex font-rale w-25">
-                <button class="qty-up border bg-light" data-id="pro1"><i class="fas fa-angle-up"></i></button>
-                <input type="text" data-id="pro1" class="qty_input border px-2 w-100 bg-light" disabled value="1" placeholder="1">
-                <button data-id="pro1" class="qty-down border bg-light"><i class="fas fa-angle-down"></i></button>
+                <button class="qty-up border bg-light" data-id="<?php echo $item['item_id']??0;?>"><i class="fas fa-angle-up"></i></button>
+
+                <input type="text" data-id="<?php echo $item['item_id']??0;?>" class="qty_input border px-2 w-100 bg-light" disabled value="1" placeholder="1">
+
+                <button data-id="<?php echo $item['item_id']??0;?>" class="qty-down border bg-light"><i class="fas fa-angle-down"></i></button>
               </div>
-              <button type="submit" class="btn font-baloo text-danger px-3 border-right">Delete</button>
-              <button type="submit" class="btn font-baloo text-danger">Save for Later</button>
+              <form method="POST">
+                <input type="hidden" name="item_id" value="<?php echo $item['item_id']??0; ?>">
+                <input type="hidden" name="user_id" value="<?php echo $currentId[0]??0; ?>">
+                <button onclick="return confirm('Are You Sure?')" type="submit" name="delete_submit" class="btn font-baloo text-danger px-3 border-right">Delete</button>
+              </form>
+              <button type="submit" name="save_later_submit" class="btn font-baloo text-danger">Save for Later</button>
+              
             </div>
             <!-- !product qty -->
           </div>
           <div class="col-sm-2 text-right">
             <div class="font-size-20 text-danger font-baloo">
-              $<span class="product_price"><?php echo $item['item_price']??0;?></span>
+              $<span class="product_price" data-id="<?php echo $item['item_id']??0;?>" ><?php echo $item['item_price']??0;?></span>
             </div>
           </div>
         </div>
-         <?php }, $cart);} ?> 
-        <!-- !cart item -->
+        <?php
+        return $item['item_price'];
+        }, $cart);
+        // print_r($subTotal);
+        endforeach;
+        ?>
       </div>
-      <!-- subtotal section-->
-      <div class="col-sm-3">
-        <div class="sub-total border text-center mt-2">
-          <h6 class="font-size-12 font-rale text-success py-3"><i class="fas fa-check"></i> Your order is eligible for FREE Delivery.</h6>
-          <div class="border-top py-4">
-            <h5 class="font-baloo font-size-20">Subtotal (2 item):&nbsp; <span class="text-danger">$<span class="text-danger" id="deal-price">152.00</span> </span> </h5>
-            <button type="submit" class="btn btn-warning mt-3">Proceed to Buy</button>
+        <!-- subtotal section-->
+        <div class="col-sm-3">
+          <div class="sub-total border text-center mt-2">
+            <h6 class="font-size-12 font-rale text-success py-3"><i class="fas fa-check"></i> Your order is eligible for FREE Delivery.</h6>
+             <div class="border-top py-4">
+              <h5 class="font-baloo font-size-20">Subtotal (<?php echo isset($subTotal) ? count($subTotal):0; ?> item):&nbsp; <span class="text-danger">$<span class="text-danger" id="deal-price"><?php echo isset($subTotal)?$Cart->getSum($subTotal):0; ?></span> </span> </h5>
+              <button type="submit" class="btn btn-warning mt-3">Proceed to Buy</button>
+            </div>
           </div>
         </div>
+        <!-- !subtotal section-->
       </div>
-      <!-- !subtotal section-->
+      <!--  !shopping cart items   -->
     </div>
-    <!--  !shopping cart items   -->
-  </div>
-</section>
-<!-- !Shopping cart section  -->
-<!-- New Phones -->
-<?php include_once "Template/_new_phone.php"; ?>
-<!-- !New Phones -->
-<?php require_once("footer.php"); ?>
+  </section>
+  <!-- !Shopping cart section  -->
+  <!-- New Phones -->
+  <?php include_once "Template/_new_phone.php"; ?>
+  <!-- !New Phones -->
+  <?php require_once("footer.php");
+  else: header("Location:login.php");
+  endif;?>

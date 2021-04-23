@@ -1,10 +1,31 @@
 <?php include "header.php";?>
 <!--   product  -->
 <?php
+if ($_SERVER['REQUEST_METHOD']=='POST') {
+	if (isset($_POST['_product_submit'])) {
+		$cartArray = array(
+      'user_id' => $_POST['user_id'],
+      'item_id' => $_POST['item_id'],
+	    );
+	    $Cart->insertIntoCart($cartArray);
+	}
+}
+if (isset($_COOKIE['Auth'])):
+$Auth =  $_COOKIE['Auth'];
+$curCookie = $Login->checkCookie($Auth);
+$currentId = array_map(function($user){ return $user['user_id']; }, $curCookie);
+//print_r($currentId);
+else: $currentId= null;
+endif;
+
 if (isset($_GET['item_id'])) {
+
 	if ($_GET['item_id'] !=null) {//$item_id = 
+
 $item_id = $_GET['item_id'];
-foreach ($Product->GetData() as $item) {
+
+// foreach ($Product->GetData() as $item) {
+	array_map(function($item) use($item_id, $currentId){
 if ($item['item_id']==$item_id) {?>
 <section id="product" class="py-3">
 	<div class="container">
@@ -15,9 +36,11 @@ if ($item['item_id']==$item_id) {?>
 					<div class="col">
 						<button type="submit" class="btn btn-danger form-control">Proceed to Buy</button>
 					</div>
-					<div class="col">
-						<button type="submit" class="btn btn-warning form-control">Add to Cart</button>
-					</div>
+					<form method="post">
+              <input type="hidden" name="item_id" value="<?php echo $item['item_id'] ?>">
+              <input type="hidden" name="user_id" value="<?php echo isset($_COOKIE['Auth']) ? $currentId[0]:0; ?>">
+              <button  type="submit" name="_product_submit" class="btn btn-warning form-control font-size-12">Add to Cart</button>
+            </form>
 				</div>
 			</div>
 			<div class="col-sm-6 py-5">
@@ -34,7 +57,7 @@ if ($item['item_id']==$item_id) {?>
 					<a href="#" class="px-2 font-rale font-size-14">20,534 ratings | 1000+ answered questions</a>
 				</div>
 				<hr class="m-0">
-				<!---    product price       -->
+				<!---    product price  -->
 				<table class="my-3">
 					<tr class="font-rale font-size-14">
 						<td>M.R.P:</td>
@@ -134,21 +157,6 @@ if ($item['item_id']==$item_id) {?>
 		</div>
 	</div>
 </section>
-<?php		}
-}
-	}
-}
-?>
+<?php } }, $Product->GetData()); }} ?>
 <!--   !product  -->
 <?php include "footer.php";?>
-<?php
-// if (isset($_GET['item_id'])):
-// 	if ($_GET['item_id'] !=null)://$item_id = 
-// $item_id = $_GET['item_id'];
-// $products = $Product->GetData();
-
-// if ($item['item_id']==$item_id):
-// 	array_map(function($item){
-
-// }, $products);	endif;endif; endif;
-?>

@@ -3,6 +3,7 @@ if ($_SERVER["REQUEST_METHOD"]=='POST') {
 	if (isset($_POST['login_submit'])) {
 		if ( !empty($_POST['user_name']) && !empty($_POST['user_pass']) ) {
 		$loginDataArr = array('user_name' => $_POST['user_name'],'user_pass' => $_POST['user_pass'] );
+		// print_r($loginDataArr);exit();
 		$Login->CanLogin($loginDataArr);
 	}
 	}
