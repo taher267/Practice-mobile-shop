@@ -1,4 +1,5 @@
 <?php
+namespace Shopee;
 /**
 * Table class
 */

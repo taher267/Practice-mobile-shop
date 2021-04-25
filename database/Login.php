@@ -1,4 +1,5 @@
 <?php
+namespace Shopee;
 /**
 * User Login Class
 */

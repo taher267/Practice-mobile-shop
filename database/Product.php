@@ -1,4 +1,5 @@
 <?php
+namespace Shopee;
 class Product
 {
     public $db = null;

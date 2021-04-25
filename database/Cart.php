@@ -1,5 +1,5 @@
 <?php
-// namespace Shopee;
+namespace Shopee;
 /**
 * Cart Class
 */

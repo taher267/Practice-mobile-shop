@@ -1,5 +1,8 @@
 <?php
-
+namespace Shopee;
+/**
+ * Database Controller
+ */
 class DBController {
   //Database Connection Properties
   protected $host = 'localhost';  
@@ -13,7 +16,7 @@ class DBController {
   //call Constructor
   public function __construct(){
 
-    $this->con =new mysqli($this->host, $this->username, $this->password, $this->database);
+    $this->con = new \mysqli($this->host, $this->username, $this->password, $this->database);
     if ($this->con->connect_error) {
       echo "Fail". $this->con->connect_error;
     }
