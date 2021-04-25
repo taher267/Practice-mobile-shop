@@ -26,10 +26,7 @@
      <?php if (isset($_COOKIE['Auth'])): 
     $Auth = $_COOKIE['Auth'];
     $loginAuth = $Login->checkCookie($Auth);
-    $currentId= array_map(function($user){return $user['user_id'];}, $loginAuth);
-    // print_r($currentId[0]) ; exit();
-
-   endif; ?>
+    $currentId= array_map(function($user){return $user['user_id'];}, $loginAuth);endif; ?>
 </head>
 
 <body>
@@ -55,7 +52,7 @@
                       </a>
                       <a href="profile.php" class="px-3 border-right border-left text-dark">Profile</a>
                     <?php endif; ?>
-                    <a href="#" class="px-3 border-right text-dark">Whishlist (0)</a>
+                    <a href="#" class="px-3 border-right text-dark">Wishlist (<?php echo isset($_COOKIE['Auth'])? count($Cart->GetCartData($currentId[0],'wishlist')) :0;?>)</a>
                 </div>
             </div>
 
@@ -88,14 +85,11 @@
                   </ul>
                   <form action="#" class="font-size-14 font-rale">
                     <?php 
-                     if (isset($_COOKIE['Auth'])) {
-                         $cartNum = count($Cart->GetCartData($currentId[0],'cart'));
-                       
-                        }
+                     
                      ?>
                       <a href="cart.php" class="py-2 rounded-pill color-primary-bg">
                         <span class="font-size-16 px-2 text-white"><i class="fas fa-shopping-cart"></i></span>
-                        <span class="px-3 py-2 rounded-pill text-dark bg-light"><?php echo isset($_COOKIE['Auth'])?$cartNum:0;?>
+                        <span class="px-3 py-2 rounded-pill text-dark bg-light"><?php echo isset($_COOKIE['Auth'])? count($Cart->GetCartData($currentId[0],'cart')) :0;?>
                         </span>
                       </a>
                   </form>

@@ -1,4 +1,5 @@
 <?php
+require 'vendor/autoload.php';
 //require Database file
 require_once 'database/DBController.php';
 

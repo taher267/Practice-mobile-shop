@@ -14,12 +14,13 @@ if (isset($_COOKIE['Auth'])):
 $Auth =  $_COOKIE['Auth'];
 $curCookie = $Login->checkCookie($Auth);
 $currentId= array_map(function($user){return $user['user_id'];}, $curCookie);
-//print_r($currentId);
+$inCart = $Cart->GetCartId($Product->GetData('cart'), $currentId[0]);
+// echo ($currentId[0]);
 else: $currentId= null;
 endif;
 //cart empty or not
 
-$inCart = $Cart->GetCartId($Product->GetData('cart'), 1);//$currentId
+
 if (!empty($inCart)) {
   $InTheCart = $inCart;
 }else{

@@ -18,11 +18,13 @@ $Auth =  $_COOKIE['Auth'];
 $curCookie = $Login->checkCookie($Auth);
 $currentId= array_map(function($user){return $user['user_id'];}, $curCookie);
 //print_r($currentId);
+// die();
+$inCart = $Cart->GetCartId($Product->GetData('cart'),$currentId[0]);
 else: $currentId= null;
 endif;
 //cart empty or not
 
-$inCart = $Cart->GetCartId($Product->GetData('cart'),1);
+
 if (!empty($inCart)) {
   $InTheCart = $inCart ;
 }else{
@@ -59,10 +61,10 @@ if (!empty($inCart)) {
                     if ($currentId>0) {
                       echo '<button disabled class="btn btn-success font-size-12">In the Cart</button>';
                     }else{
-                    echo '<button  type="submit" name="_top_sale_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
+                    echo '<button  type="submit" name="_new_phone_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
               }
                   }else{
-                    echo '<button  type="submit" name="_top_sale_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
+                    echo '<button  type="submit" name="_new_phone_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
               }?>
             </form>
           </div>

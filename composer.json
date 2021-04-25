@@ -1,0 +1,16 @@
+{
+    "name": "shop/shopee2",
+    "description": "Mobile Shop project",
+    "authors": [
+        {
+            "name": "ABU TAHER",
+            "email": "abutaher267@gmail.com"
+        }
+    ],
+    "autoload": {
+    	"psr-4": {
+    		"Shopee\\": "database"
+    	}
+    },
+    "require": {}
+}

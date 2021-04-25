@@ -35,4 +35,4 @@ class DBController {
   
 }
 
-$db = new DBController;
+
